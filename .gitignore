@@ -1,0 +1,32 @@
+# Visual Studio
+.vs/
+
+# Build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+
+# Rider
+.idea/
+
+# EF Core Migrations
+**/Migrations/
+
+# Visual Studio Code
+.vscode/
+
+# NuGet packages
+*.nupkg
+
+# Others
+*.DS_Store
+

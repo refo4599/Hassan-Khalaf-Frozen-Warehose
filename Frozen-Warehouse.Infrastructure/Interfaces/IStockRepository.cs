@@ -1,0 +1,1 @@
+// This file intentionally left blank as the domain defines IStockRepository. If this file exists, it should be removed in favor of domain interface.
