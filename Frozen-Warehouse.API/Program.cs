@@ -10,6 +10,8 @@ using Frozen_Warehouse.Domain.Interfaces;
 using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
+using Microsoft.OpenApi.Models;
+using Frozen_Warehouse.Infrastructure.DependencyInjection;
 
 namespace Frozen_Warehouse.API
 {
@@ -19,30 +21,58 @@ namespace Frozen_Warehouse.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var configuration = builder.Configuration;
+
             // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-            // DbContext
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            // Swagger with JWT support
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Frozen Warehouse API", Version = "v1" });
 
-            // Repositories
-            builder.Services.AddScoped(typeof(Frozen_Warehouse.Domain.Interfaces.IRepository<>), typeof(Repository<>));
-            builder.Services.AddScoped<Frozen_Warehouse.Domain.Interfaces.IUserRepository, UserRepository>();
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter: Bearer {your token}"
+                });
 
-            // Services
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
+
+            // Infrastructure registration (DbContext, repositories, token service)
+            builder.Services.AddInfrastructure(configuration);
+
+            // Application services
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IInboundService, InboundService>();
+            builder.Services.AddScoped<IOutboundService, OutboundService>();
+            builder.Services.AddScoped<IStockService, StockService>();
 
             // JWT
-            var jwtKey = builder.Configuration["Jwt:Key"];
+            var jwtSection = configuration.GetSection("Jwt");
+            var jwtKey = jwtSection["Key"];
             if (string.IsNullOrWhiteSpace(jwtKey))
             {
-                throw new InvalidOperationException("Configuration value 'Jwt:Key' is missing. Set it in appsettings.json, appsettings.Development.json, user-secrets, or environment variables.");
+                throw new InvalidOperationException("Configuration value 'Jwt:Key' is missing. Set it in appsettings.json or environment variables.");
             }
 
             var key = Encoding.UTF8.GetBytes(jwtKey);
@@ -58,28 +88,21 @@ namespace Frozen_Warehouse.API
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSection["Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = jwtSection["Audience"],
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            // Always enable Swagger and set it to the application root so opening the root URL shows Swagger UI.
-            app.MapOpenApi();
-
-            // Ensure the Swagger JSON is served
             app.UseSwagger();
-
             app.UseSwaggerUI(c =>
             {
-                // Serve the UI at application root
                 c.RoutePrefix = string.Empty;
-
-                // Explicitly point Swagger UI to the generated OpenAPI/Swagger JSON.
-                // Swashbuckle generates the document at "/swagger/v1/swagger.json" by default.
-                // Some OpenAPI helpers may expose it at "/v1/swagger.json"; add the Swashbuckle path so the UI can load it.
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Frozen Warehouse API v1");
             });
 
