@@ -1,10 +1,14 @@
 ﻿using Frozen_Warehouse.Domain.Entities;
 using Frozen_Warehouse.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Frozen_Warehouse.API.Controllers
 {
-    public class ProductController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    //[Authorize(Roles = "StoreKeeper,Admin")]
+    public class ProductController : ControllerBase
     {
         private readonly ILogger<ProductController> _logger;
         private readonly ApplicationDbContext _context;
