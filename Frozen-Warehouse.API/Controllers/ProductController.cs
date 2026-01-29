@@ -7,7 +7,7 @@ namespace Frozen_Warehouse.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // TODO: Re-enable role restrictions after development
+    //[Authorize] // TODO: Re-enable role restrictions after development
     public class ProductController : ControllerBase
     {
         private readonly ILogger<ProductController> _logger;
