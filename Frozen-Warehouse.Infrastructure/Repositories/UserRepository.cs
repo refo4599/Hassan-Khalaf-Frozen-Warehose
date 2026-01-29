@@ -13,7 +13,7 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
 
         public async Task<User?> FindByUserNameAsync(string userName)
         {
-            return await _dbSet.FirstOrDefaultAsync(u => u.UserName == userName);
+            return await _dbSet.FirstOrDefaultAsync(u => u.Username == userName);
         }
     }
 }

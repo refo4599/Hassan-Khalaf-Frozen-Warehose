@@ -7,7 +7,7 @@ namespace Frozen_Warehouse.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "StoreKeeper,Admin")]
+    [Authorize] // TODO: Re-enable role restrictions after development
     public class OutboundController : ControllerBase
     {
         private readonly IOutboundService _outboundService;

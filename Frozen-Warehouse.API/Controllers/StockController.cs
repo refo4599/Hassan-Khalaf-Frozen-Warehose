@@ -6,7 +6,7 @@ namespace Frozen_Warehouse.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize] // TODO: Re-enable role restrictions after development
     public class StockController : ControllerBase
     {
         private readonly IStockService _stockService;

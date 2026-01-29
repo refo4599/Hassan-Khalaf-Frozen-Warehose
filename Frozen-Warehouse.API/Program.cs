@@ -27,6 +27,21 @@ namespace Frozen_Warehouse.API
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
+            // CORS - allow Angular frontend
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
+            // Authorization services kept but role enforcement disabled in middleware for development
+            builder.Services.AddAuthorization();
+
             // Swagger with JWT support
             builder.Services.AddSwaggerGen(c =>
             {
@@ -108,8 +123,14 @@ namespace Frozen_Warehouse.API
 
             app.UseHttpsRedirection();
 
+            app.UseRouting();
+
+            app.UseCors("AllowAngular");
+
             app.UseAuthentication();
-            app.UseAuthorization();
+
+            // TODO: Re-enable authorization after development
+            // app.UseAuthorization();
 
             app.MapControllers();
 

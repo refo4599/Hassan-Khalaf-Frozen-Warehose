@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Frozen_Warehouse.Domain.Entities;
 using Frozen_Warehouse.Domain.Enums;
-using System.Text;
-using System.Security.Cryptography;
 
 namespace Frozen_Warehouse.Infrastructure.Data
 {
@@ -55,21 +53,13 @@ namespace Frozen_Warehouse.Infrastructure.Data
             modelBuilder.Entity<InboundDetail>().HasOne(d => d.Inbound).WithMany(i => i.Details).HasForeignKey(d => d.InboundId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<OutboundDetail>().HasOne(d => d.Outbound).WithMany(i => i.Details).HasForeignKey(d => d.OutboundId).OnDelete(DeleteBehavior.Cascade);
 
-            // seed minimal data
+            // seed users with fixed GUIDs and plain text passwords (testing only)
             var adminId = Guid.Parse("00000000-0000-0000-0000-000000000001");
             var skId = Guid.Parse("00000000-0000-0000-0000-000000000002");
 
-            // use a simple SHA256 hash for seed (in prod use a proper password hasher)
-            static string Hash(string plain)
-            {
-                using var sha = SHA256.Create();
-                var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(plain));
-                return Convert.ToBase64String(bytes);
-            }
-
             modelBuilder.Entity<User>().HasData(
-                new User { Id = adminId, UserName = "admin", PasswordHash = Hash("password"), Role = Roles.Admin },
-                new User { Id = skId, UserName = "storekeeper", PasswordHash = Hash("password"), Role = Roles.StoreKeeper }
+                new User { Id = adminId, Username = "admin", Password = "123456", Role = Roles.Admin },
+                new User { Id = skId, Username = "storekeeper", Password = "123456", Role = Roles.StoreKeeper }
             );
         }
 

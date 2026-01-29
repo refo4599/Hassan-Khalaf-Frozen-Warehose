@@ -2,8 +2,6 @@ using Frozen_Warehouse.Application.DTOs.Auth;
 using Frozen_Warehouse.Application.Interfaces.IServices;
 using Frozen_Warehouse.Domain.Interfaces;
 using Frozen_Warehouse.Domain.Entities;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Frozen_Warehouse.Application.Services
 {
@@ -23,17 +21,10 @@ namespace Frozen_Warehouse.Application.Services
             var user = await _userRepository.FindByUserNameAsync(request.UserName);
             if (user == null) throw new UnauthorizedAccessException("Invalid credentials");
 
-            // verify password using SHA256 matching seed
-            string Hash(string plain)
-            {
-                using var sha = SHA256.Create();
-                var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(plain));
-                return Convert.ToBase64String(bytes);
-            }
+            // plain text comparison for testing only
+            if (user.Password != request.Password) throw new UnauthorizedAccessException("Invalid credentials");
 
-            if (user.PasswordHash != Hash(request.Password)) throw new UnauthorizedAccessException("Invalid credentials");
-
-            return _tokenService.CreateToken(user.Id, user.UserName, user.Role);
+            return _tokenService.CreateToken(user.Id, user.Username, user.Role);
         }
     }
 }
