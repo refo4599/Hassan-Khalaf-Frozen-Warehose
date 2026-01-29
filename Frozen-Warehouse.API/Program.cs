@@ -39,7 +39,7 @@ namespace Frozen_Warehouse.API
                 });
             });
 
-            // Authorization services kept but role enforcement disabled in middleware for development
+            // Authorization services
             builder.Services.AddAuthorization();
 
             // Swagger with JWT support
@@ -82,7 +82,7 @@ namespace Frozen_Warehouse.API
             builder.Services.AddScoped<IOutboundService, OutboundService>();
             builder.Services.AddScoped<IStockService, StockService>();
 
-            // JWT
+            // JWT - configure authentication
             var jwtSection = configuration.GetSection("Jwt");
             var jwtKey = jwtSection["Key"];
             if (string.IsNullOrWhiteSpace(jwtKey))
@@ -91,29 +91,27 @@ namespace Frozen_Warehouse.API
             }
 
             var key = Encoding.UTF8.GetBytes(jwtKey);
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
+            builder.Services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidIssuer = jwtSection["Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = jwtSection["Audience"],
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = true,
+                        ValidIssuer = jwtSection["Issuer"],
+                        ValidateAudience = true,
+                        ValidAudience = jwtSection["Audience"],
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the HTTP request pipeline in the correct order.
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -123,14 +121,11 @@ namespace Frozen_Warehouse.API
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-
             app.UseCors("AllowAngular");
 
             app.UseAuthentication();
 
-            // TODO: Re-enable authorization after development
-            // app.UseAuthorization();
+            app.UseAuthorization();
 
             app.MapControllers();
 
