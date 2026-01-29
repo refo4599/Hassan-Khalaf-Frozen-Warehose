@@ -18,7 +18,7 @@ namespace Frozen_Warehouse.Application.Services
 
         public async Task<ProductDto> CreateAsync(CreateProductRequest request)
         {
-            var product = new Product { Id = Guid.NewGuid(), Name = request.Name };
+            var product = new Product { Name = request.Name };
             await _repo.AddAsync(product);
             await _uow.SaveChangesAsync();
             return new ProductDto { Id = product.Id, Name = product.Name };
@@ -41,7 +41,7 @@ namespace Frozen_Warehouse.Application.Services
             }
         }
 
-        public async Task<ProductDto?> GetByIdAsync(Guid id)
+        public async Task<ProductDto?> GetByIdAsync(int id)
         {
             var entity = await _repo.GetByIdAsync(id);
             if (entity == null) return null;

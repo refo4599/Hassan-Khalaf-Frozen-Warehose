@@ -18,14 +18,13 @@ namespace Frozen_Warehouse.Application.Services
             _uow = uow;
         }
 
-        public async Task<Guid> CreateInboundAsync(CreateInboundRequest request)
+        public async Task<int> CreateInboundAsync(CreateInboundRequest request)
         {
             if (request.Lines == null || request.Lines.Count == 0)
                 throw new ArgumentException("Inbound must contain at least one line");
 
             var inbound = new Inbound
             {
-                Id = Guid.NewGuid(),
                 ClientId = request.ClientId,
                 CreatedAt = DateTime.UtcNow
             };
@@ -36,7 +35,6 @@ namespace Frozen_Warehouse.Application.Services
 
                 var detail = new InboundDetail
                 {
-                    Id = Guid.NewGuid(),
                     InboundId = inbound.Id,
                     ProductId = line.ProductId,
                     SectionId = line.SectionId,
@@ -49,7 +47,6 @@ namespace Frozen_Warehouse.Application.Services
                 {
                     stock = new Stock
                     {
-                        Id = Guid.NewGuid(),
                         ClientId = request.ClientId,
                         ProductId = line.ProductId,
                         SectionId = line.SectionId,

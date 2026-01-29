@@ -18,14 +18,13 @@ namespace Frozen_Warehouse.Application.Services
             _uow = uow;
         }
 
-        public async Task<Guid> CreateOutboundAsync(CreateOutboundRequest request)
+        public async Task<int> CreateOutboundAsync(CreateOutboundRequest request)
         {
             if (request.Lines == null || request.Lines.Count == 0)
                 throw new ArgumentException("Outbound must contain at least one line");
 
             var outbound = new Outbound
             {
-                Id = Guid.NewGuid(),
                 ClientId = request.ClientId,
                 CreatedAt = DateTime.UtcNow
             };
@@ -46,7 +45,6 @@ namespace Frozen_Warehouse.Application.Services
             {
                 var detail = new OutboundDetail
                 {
-                    Id = Guid.NewGuid(),
                     OutboundId = outbound.Id,
                     ProductId = line.ProductId,
                     SectionId = line.SectionId,

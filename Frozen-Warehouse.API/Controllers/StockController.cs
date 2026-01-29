@@ -17,7 +17,7 @@ namespace Frozen_Warehouse.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] Guid clientId, [FromQuery] Guid productId, [FromQuery] Guid sectionId)
+        public async Task<IActionResult> Get([FromQuery] int clientId, [FromQuery] int productId, [FromQuery] int sectionId)
         {
             var qty = await _stockService.GetStockAsync(clientId, productId, sectionId);
             return Ok(new { clientId, productId, sectionId, quantity = qty });
