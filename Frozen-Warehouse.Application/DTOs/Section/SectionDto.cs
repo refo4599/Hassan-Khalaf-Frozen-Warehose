@@ -8,6 +8,7 @@ namespace Frozen_Warehouse.Application.DTOs.Section
 {
     public class SectionDTO
     {
-
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
