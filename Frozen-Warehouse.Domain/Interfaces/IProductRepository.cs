@@ -5,7 +5,7 @@ namespace Frozen_Warehouse.Domain.Interfaces
     public interface IProductRepository
     {
         Task<Product?> GetByNameAsync(string name);
-        Task<Product?> GetByIdAsync(Guid id);
+        Task<Product?> GetByIdAsync(int id);
         Task AddAsync(Product product);
         void Update(Product product);
     }

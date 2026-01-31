@@ -52,14 +52,14 @@ namespace Frozen_Warehouse.Infrastructure.Data
             // Seed 8 sections
             var sections = new[]
             {
-                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000001"), Name = "S1" },
-                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000002"), Name = "S2" },
-                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000003"), Name = "S3" },
-                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000004"), Name = "S4" },
-                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000005"), Name = "S5" },
-                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000006"), Name = "S6" },
-                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000007"), Name = "S7" },
-                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000008"), Name = "S8" }
+                new Section { Id = 1, Name = "S1" },
+                new Section { Id = 2, Name = "S2" },
+                new Section { Id = 3, Name = "S3" },
+                new Section { Id = 4, Name = "S4" },
+                new Section { Id = 5, Name = "S5" },
+                new Section { Id = 6, Name = "S6" },
+                new Section { Id = 7, Name = "S7" },
+                new Section { Id = 8, Name = "S8" }
             };
             modelBuilder.Entity<Section>().HasData(sections);
 

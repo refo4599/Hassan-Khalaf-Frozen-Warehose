@@ -12,16 +12,37 @@ namespace Frozen_Warehouse.Application.Services
         {
             _stockRepo = stockRepo;
         }
-
-<<<<<<< HEAD
-        public async Task<StockResponse> GetStockAsync(Guid clientId, Guid productId, Guid sectionId)
-=======
-        public async Task<decimal> GetStockAsync(int clientId, int productId, int sectionId)
->>>>>>> 726a0b6d453ba18a5701926cf9d8477739ad96f7
+        public async Task<StockResponse> GetStockAsync(int clientId, int productId, int sectionId)
         {
             var stock = await _stockRepo.FindAsync(clientId, productId, sectionId);
-            if (stock == null) return new StockResponse { ClientId = clientId, ProductId = productId, SectionId = sectionId, Cartons = 0, Pallets = 0 };
-            return new StockResponse { ClientId = stock.ClientId, ProductId = stock.ProductId, SectionId = stock.SectionId, Cartons = stock.Cartons, Pallets = stock.Pallets };
+
+            if (stock == null)
+            {
+                return new StockResponse
+                {
+                    ClientId = clientId,
+                    ProductId = productId,
+                    SectionId = sectionId,
+                    Cartons = 0,
+                    Pallets = 0
+                };
+            }
+
+            return new StockResponse
+            {
+                ClientId = stock.ClientId,
+                ProductId = stock.ProductId,
+                SectionId = stock.SectionId,
+                Cartons = stock.Cartons,
+                Pallets = stock.Pallets
+            };
+        }
+        //public async Task<StockResponse> GetStockAsync(Guid clientId, Guid productId, Guid sectionId)
+        public async Task<decimal> GetStockQuantityAsync(int clientId, int productId, int sectionId)
+        {
+            var stock = await _stockRepo.FindAsync(clientId, productId, sectionId);
+            if (stock == null) return 0;
+            return stock.Cartons;
         }
     }
 }

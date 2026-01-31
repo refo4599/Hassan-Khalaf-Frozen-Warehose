@@ -5,7 +5,7 @@ namespace Frozen_Warehouse.Domain.Interfaces
     public interface ISectionRepository
     {
         Task<Section?> GetByNameAsync(string name);
-        Task<Section?> GetByIdAsync(Guid id);
+        Task<Section?> GetByIdAsync(int id);
         Task<IEnumerable<Section>> GetAllAsync();
     }
 }

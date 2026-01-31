@@ -47,7 +47,6 @@ namespace Frozen_Warehouse.Application.Services
             {
                 client = new Client
                 {
-                    Id = Guid.NewGuid(),
                     Name = request.ClientName.Trim()
                 };
                 await _clientRepo.AddAsync(client);
@@ -57,12 +56,7 @@ namespace Frozen_Warehouse.Application.Services
             // Step 3: Create inbound with client ID
             var inbound = new Inbound
             {
-<<<<<<< HEAD
-                Id = Guid.NewGuid(),
                 ClientId = client.Id,
-=======
-                ClientId = request.ClientId,
->>>>>>> 726a0b6d453ba18a5701926cf9d8477739ad96f7
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -100,19 +94,12 @@ namespace Frozen_Warehouse.Application.Services
                     // Create new stock
                     stock = new Stock
                     {
-<<<<<<< HEAD
-                        Id = Guid.NewGuid(),
+//<<<<<<< HEAD
                         ClientId = client.Id,
                         ProductId = product.Id,
                         SectionId = section.Id,
                         Cartons = line.Cartons,
-                        Pallets = line.Pallets
-=======
-                        ClientId = request.ClientId,
-                        ProductId = line.ProductId,
-                        SectionId = line.SectionId,
-                        Quantity = line.Quantity
->>>>>>> 726a0b6d453ba18a5701926cf9d8477739ad96f7
+                        Pallets = line.Pallets,
                     };
                     await _stockRepo.AddAsync(stock);
                 }

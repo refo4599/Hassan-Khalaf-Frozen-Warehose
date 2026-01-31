@@ -13,10 +13,10 @@ namespace Frozen_Warehouse.Application.Services
             _sectionRepo = sectionRepo;
         }
 
-        public async Task<IEnumerable<SectionDto>> GetAllAsync()
+        public async Task<IEnumerable<SectionDTO>> GetAllAsync()
         {
             var sections = await _sectionRepo.GetAllAsync();
-            return sections.Select(s => new SectionDto { Id = s.Id, Name = s.Name });
+            return sections.Select(s => new SectionDTO { Id = s.Id, Name = s.Name });
         }
     }
 }

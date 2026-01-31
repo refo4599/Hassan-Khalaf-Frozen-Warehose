@@ -21,7 +21,7 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
             return await _dbSet.FirstOrDefaultAsync(s => s.Name == name);
         }
 
-        public async Task<Section?> GetByIdAsync(Guid id)
+        public async Task<Section?> GetByIdAsync(int id)
         {
             return await _dbSet.FirstOrDefaultAsync(s => s.Id == id);
         }

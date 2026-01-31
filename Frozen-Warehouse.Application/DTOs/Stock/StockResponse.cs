@@ -2,9 +2,9 @@ namespace Frozen_Warehouse.Application.DTOs.Stock
 {
     public class StockResponse
     {
-        public Guid ClientId { get; set; }
-        public Guid ProductId { get; set; }
-        public Guid SectionId { get; set; }
+        public int ClientId { get; set; }
+        public int ProductId { get; set; }
+        public int SectionId { get; set; }
         public int Cartons { get; set; }
         public int Pallets { get; set; }
     }
