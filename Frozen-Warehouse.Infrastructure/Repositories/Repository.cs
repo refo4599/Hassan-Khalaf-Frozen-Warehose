@@ -20,7 +20,7 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
             await _dbSet.AddAsync(entity);
         }
 
-        public async Task<T?> GetByIdAsync(Guid id)
+        public async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }

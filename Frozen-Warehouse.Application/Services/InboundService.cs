@@ -30,7 +30,7 @@ namespace Frozen_Warehouse.Application.Services
             _uow = uow;
         }
 
-        public async Task<Guid> CreateInboundAsync(CreateInboundRequest request)
+        public async Task<int> CreateInboundAsync(CreateInboundRequest request)
         {
             // Validation
             if (string.IsNullOrWhiteSpace(request.ClientName))
@@ -57,8 +57,12 @@ namespace Frozen_Warehouse.Application.Services
             // Step 3: Create inbound with client ID
             var inbound = new Inbound
             {
+<<<<<<< HEAD
                 Id = Guid.NewGuid(),
                 ClientId = client.Id,
+=======
+                ClientId = request.ClientId,
+>>>>>>> 726a0b6d453ba18a5701926cf9d8477739ad96f7
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -80,7 +84,6 @@ namespace Frozen_Warehouse.Application.Services
                 // Add inbound detail with resolved IDs
                 var detail = new InboundDetail
                 {
-                    Id = Guid.NewGuid(),
                     InboundId = inbound.Id,
                     ProductId = product.Id,
                     SectionId = section.Id,
@@ -97,12 +100,19 @@ namespace Frozen_Warehouse.Application.Services
                     // Create new stock
                     stock = new Stock
                     {
+<<<<<<< HEAD
                         Id = Guid.NewGuid(),
                         ClientId = client.Id,
                         ProductId = product.Id,
                         SectionId = section.Id,
                         Cartons = line.Cartons,
                         Pallets = line.Pallets
+=======
+                        ClientId = request.ClientId,
+                        ProductId = line.ProductId,
+                        SectionId = line.SectionId,
+                        Quantity = line.Quantity
+>>>>>>> 726a0b6d453ba18a5701926cf9d8477739ad96f7
                     };
                     await _stockRepo.AddAsync(stock);
                 }

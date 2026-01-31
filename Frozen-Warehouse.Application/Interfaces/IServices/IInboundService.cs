@@ -4,6 +4,6 @@ namespace Frozen_Warehouse.Application.Interfaces.IServices
 {
     public interface IInboundService
     {
-        Task<Guid> CreateInboundAsync(CreateInboundRequest request);
+        Task<int> CreateInboundAsync(CreateInboundRequest request);
     }
 }

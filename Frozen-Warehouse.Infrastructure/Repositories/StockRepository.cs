@@ -14,7 +14,7 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Stock?> FindAsync(Guid clientId, Guid productId, Guid sectionId)
+        public async Task<Stock?> FindAsync(int clientId, int productId, int sectionId)
         {
             return await _context.Stocks.FirstOrDefaultAsync(s => s.ClientId == clientId && s.ProductId == productId && s.SectionId == sectionId);
         }

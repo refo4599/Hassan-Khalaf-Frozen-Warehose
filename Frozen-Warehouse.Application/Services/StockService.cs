@@ -13,7 +13,11 @@ namespace Frozen_Warehouse.Application.Services
             _stockRepo = stockRepo;
         }
 
+<<<<<<< HEAD
         public async Task<StockResponse> GetStockAsync(Guid clientId, Guid productId, Guid sectionId)
+=======
+        public async Task<decimal> GetStockAsync(int clientId, int productId, int sectionId)
+>>>>>>> 726a0b6d453ba18a5701926cf9d8477739ad96f7
         {
             var stock = await _stockRepo.FindAsync(clientId, productId, sectionId);
             if (stock == null) return new StockResponse { ClientId = clientId, ProductId = productId, SectionId = sectionId, Cartons = 0, Pallets = 0 };

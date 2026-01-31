@@ -4,6 +4,6 @@ namespace Frozen_Warehouse.Application.Interfaces.IServices
 {
     public interface IOutboundService
     {
-        Task<Guid> CreateOutboundAsync(CreateOutboundRequest request);
+        Task<int> CreateOutboundAsync(CreateOutboundRequest request);
     }
 }
