@@ -15,7 +15,7 @@ namespace Frozen_Warehouse.Domain.Entities
         public Guid SectionId { get; set; }
         public Section Section { get; set; } = null!;
 
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal Quantity { get; set; }
+        public int Cartons { get; set; }
+        public int Pallets { get; set; }
     }
 }

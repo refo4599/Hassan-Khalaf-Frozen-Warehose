@@ -26,10 +26,6 @@ namespace Frozen_Warehouse.Infrastructure.Data
 
             modelBuilder.Entity<Stock>().HasIndex(s => new { s.ClientId, s.ProductId, s.SectionId }).IsUnique();
 
-            modelBuilder.Entity<Stock>().Property(s => s.Quantity).HasPrecision(18, 2);
-            modelBuilder.Entity<InboundDetail>().Property(d => d.Quantity).HasPrecision(18, 2);
-            modelBuilder.Entity<OutboundDetail>().Property(d => d.Quantity).HasPrecision(18, 2);
-
             // Configure relationships from Stock side to avoid requiring navigation collections on Client/Product/Section
             modelBuilder.Entity<Stock>()
                 .HasOne(s => s.Client)
@@ -53,7 +49,21 @@ namespace Frozen_Warehouse.Infrastructure.Data
             modelBuilder.Entity<InboundDetail>().HasOne(d => d.Inbound).WithMany(i => i.Details).HasForeignKey(d => d.InboundId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<OutboundDetail>().HasOne(d => d.Outbound).WithMany(i => i.Details).HasForeignKey(d => d.OutboundId).OnDelete(DeleteBehavior.Cascade);
 
-            // seed users with fixed GUIDs and plain text passwords (testing only)
+            // Seed 8 sections
+            var sections = new[]
+            {
+                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000001"), Name = "S1" },
+                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000002"), Name = "S2" },
+                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000003"), Name = "S3" },
+                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000004"), Name = "S4" },
+                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000005"), Name = "S5" },
+                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000006"), Name = "S6" },
+                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000007"), Name = "S7" },
+                new Section { Id = Guid.Parse("10000000-0000-0000-0000-000000000008"), Name = "S8" }
+            };
+            modelBuilder.Entity<Section>().HasData(sections);
+
+            // Seed users with fixed GUIDs and plain text passwords (testing only)
             var adminId = Guid.Parse("00000000-0000-0000-0000-000000000001");
             var skId = Guid.Parse("00000000-0000-0000-0000-000000000002");
 

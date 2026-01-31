@@ -7,6 +7,7 @@ using Frozen_Warehouse.Infrastructure.Repositories;
 using Frozen_Warehouse.Infrastructure.UnitOfWork;
 using Frozen_Warehouse.Infrastructure.Security;
 using Frozen_Warehouse.Application.Interfaces.IServices;
+using Frozen_Warehouse.Application.Services;
 
 namespace Frozen_Warehouse.Infrastructure.DependencyInjection
 {
@@ -19,10 +20,16 @@ namespace Frozen_Warehouse.Infrastructure.DependencyInjection
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IClientRepository, ClientRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ISectionRepository, SectionRepository>();
             services.AddScoped<IUnitOfWork, Frozen_Warehouse.Infrastructure.UnitOfWork.UnitOfWork>();
             services.AddScoped<IStockRepository, StockRepository>();
 
             services.AddScoped<ITokenService, TokenService>();
+
+            // Section service
+            services.AddScoped<ISectionService, SectionService>();
 
             return services;
         }

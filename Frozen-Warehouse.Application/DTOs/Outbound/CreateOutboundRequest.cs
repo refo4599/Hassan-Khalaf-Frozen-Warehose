@@ -10,6 +10,7 @@ namespace Frozen_Warehouse.Application.DTOs.Outbound
     {
         public Guid ProductId { get; set; }
         public Guid SectionId { get; set; }
-        public decimal Quantity { get; set; }
+        public int Cartons { get; set; }
+        public int Pallets { get; set; }
     }
 }

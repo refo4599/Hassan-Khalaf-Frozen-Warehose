@@ -4,6 +4,6 @@ namespace Frozen_Warehouse.Application.Interfaces.IServices
 {
     public interface IStockService
     {
-        Task<decimal> GetStockAsync(Guid clientId, Guid productId, Guid sectionId);
+        Task<StockResponse> GetStockAsync(Guid clientId, Guid productId, Guid sectionId);
     }
 }

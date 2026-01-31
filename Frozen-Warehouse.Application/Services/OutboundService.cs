@@ -33,9 +33,9 @@ namespace Frozen_Warehouse.Application.Services
             // Validate all lines first to ensure atomicity
             foreach (var line in request.Lines)
             {
-                if (line.Quantity <= 0) throw new ArgumentException("Quantity must be positive");
+                if (line.Cartons < 0 || line.Pallets < 0) throw new ArgumentException("Cartons and pallets must be non-negative");
                 var stock = await _stockRepo.FindAsync(request.ClientId, line.ProductId, line.SectionId);
-                if (stock == null || stock.Quantity < line.Quantity)
+                if (stock == null || stock.Cartons < line.Cartons || stock.Pallets < line.Pallets)
                 {
                     throw new InvalidOperationException($"Insufficient stock for product {line.ProductId} in section {line.SectionId}");
                 }
@@ -50,13 +50,15 @@ namespace Frozen_Warehouse.Application.Services
                     OutboundId = outbound.Id,
                     ProductId = line.ProductId,
                     SectionId = line.SectionId,
-                    Quantity = line.Quantity
+                    Cartons = line.Cartons,
+                    Pallets = line.Pallets
                 };
                 outbound.Details.Add(detail);
 
                 var stock = await _stockRepo.FindAsync(request.ClientId, line.ProductId, line.SectionId);
-                stock!.Quantity -= line.Quantity;
-                if (stock.Quantity < 0) throw new InvalidOperationException("Stock cannot be negative");
+                stock!.Cartons -= line.Cartons;
+                stock!.Pallets -= line.Pallets;
+                if (stock.Cartons < 0 || stock.Pallets < 0) throw new InvalidOperationException("Stock cannot be negative");
                 _stockRepo.Update(stock);
             }
 

@@ -1,4 +1,5 @@
 using Frozen_Warehouse.Application.Interfaces.IServices;
+using Frozen_Warehouse.Application.DTOs.Stock;
 using Frozen_Warehouse.Domain.Interfaces;
 
 namespace Frozen_Warehouse.Application.Services
@@ -12,10 +13,11 @@ namespace Frozen_Warehouse.Application.Services
             _stockRepo = stockRepo;
         }
 
-        public async Task<decimal> GetStockAsync(Guid clientId, Guid productId, Guid sectionId)
+        public async Task<StockResponse> GetStockAsync(Guid clientId, Guid productId, Guid sectionId)
         {
             var stock = await _stockRepo.FindAsync(clientId, productId, sectionId);
-            return stock?.Quantity ?? 0m;
+            if (stock == null) return new StockResponse { ClientId = clientId, ProductId = productId, SectionId = sectionId, Cartons = 0, Pallets = 0 };
+            return new StockResponse { ClientId = stock.ClientId, ProductId = stock.ProductId, SectionId = stock.SectionId, Cartons = stock.Cartons, Pallets = stock.Pallets };
         }
     }
 }
