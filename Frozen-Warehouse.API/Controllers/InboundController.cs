@@ -34,5 +34,19 @@ namespace Frozen_Warehouse.API.Controllers
                 return Problem(ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllInbound()
+        {
+            try
+            {
+                var inbounds = await _inboundService.GetAllInboundsAsync();
+                return Ok(inbounds);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
     }
 }

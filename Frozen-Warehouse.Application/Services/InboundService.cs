@@ -54,6 +54,9 @@ namespace Frozen_Warehouse.Application.Services
                 CreatedAt = DateTime.UtcNow
             };
 
+            // Track pending stock updates in-memory to handle multiple lines referring to same key
+            var pending = new Dictionary<string, Stock>();
+
             foreach (var line in request.Lines)
             {
                 if (line == null) throw new ArgumentException("Line cannot be null");
@@ -86,10 +89,19 @@ namespace Frozen_Warehouse.Application.Services
 
                 inbound.Details.Add(detail);
 
-                // Update or create stock
-                var stock = await _stockRepo.FindAsync(client.Id, product.Id, section.Id);
+                // Prepare key
+                var key = $"{product.Id}:{section.Id}";
+
+                // Try to get pending stock first
+                if (!pending.TryGetValue(key, out var stock))
+                {
+                    // Not in pending, try repo
+                    stock = await _stockRepo.FindAsync(client.Id, product.Id, section.Id);
+                }
+
                 if (stock == null)
                 {
+                    // create and add to pending and repo
                     stock = new Stock
                     {
                         ClientId = client.Id,
@@ -99,12 +111,17 @@ namespace Frozen_Warehouse.Application.Services
                         Pallets = line.Pallets
                     };
                     await _stockRepo.AddAsync(stock);
+                    pending[key] = stock;
                 }
                 else
                 {
+                    // update existing stock (either fetched from DB or pending)
                     stock.Cartons += line.Cartons;
                     stock.Pallets += line.Pallets;
+
+                    // ensure repo is aware of update
                     _stockRepo.Update(stock);
+                    pending[key] = stock;
                 }
             }
 
@@ -112,6 +129,11 @@ namespace Frozen_Warehouse.Application.Services
             await _uow.SaveChangesAsync();
 
             return inbound.Id;
+        }
+
+        public Task<IEnumerable<Inbound>> GetAllInboundsAsync()
+        {
+            return _inboundRepo.GetAllAsync();  
         }
     }
 }
