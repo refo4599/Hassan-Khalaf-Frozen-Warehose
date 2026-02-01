@@ -35,6 +35,11 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
             _dbSet.Update(entity);
         }
 
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _dbSet.AsNoTracking().ToListAsync();
+        }
+
         // provide queryable for advanced operations
         public IQueryable<T> Query()
         {

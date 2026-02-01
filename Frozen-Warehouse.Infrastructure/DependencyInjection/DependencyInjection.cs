@@ -31,6 +31,9 @@ namespace Frozen_Warehouse.Infrastructure.DependencyInjection
             // Section service
             services.AddScoped<ISectionService, SectionService>();
 
+            // Client service
+            services.AddScoped<IClientService, ClientService>();
+
             return services;
         }
     }

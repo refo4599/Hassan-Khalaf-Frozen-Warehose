@@ -35,5 +35,15 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
         {
             _dbSet.Update(product);
         }
+
+        public void Remove(Product product)
+        {
+            _dbSet.Remove(product);
+        }
+
+        public async Task<IEnumerable<Product>> GetAllAsync()
+        {
+            return await _dbSet.AsNoTracking().ToListAsync();
+        }
     }
 }

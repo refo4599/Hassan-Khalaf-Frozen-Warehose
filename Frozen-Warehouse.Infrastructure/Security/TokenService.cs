@@ -16,7 +16,7 @@ namespace Frozen_Warehouse.Infrastructure.Security
             _configuration = configuration;
         }
 
-        public string CreateToken(Guid userId, string userName, string role)
+        public string CreateToken(int userId, string userName, string role)
         {
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
 

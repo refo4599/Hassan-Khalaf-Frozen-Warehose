@@ -30,5 +30,20 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
         {
             return await _dbSet.AsNoTracking().OrderBy(s => s.Name).ToListAsync();
         }
+
+        public async Task AddAsync(Section section)
+        {
+            await _dbSet.AddAsync(section);
+        }
+
+        public void Update(Section section)
+        {
+            _dbSet.Update(section);
+        }
+
+        public void Remove(Section section)
+        {
+            _dbSet.Remove(section);
+        }
     }
 }

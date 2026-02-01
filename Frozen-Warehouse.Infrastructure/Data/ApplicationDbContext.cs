@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Frozen_Warehouse.Domain.Entities;
 using Frozen_Warehouse.Domain.Enums;
+using System;
 
 namespace Frozen_Warehouse.Infrastructure.Data
 {
@@ -23,6 +24,8 @@ namespace Frozen_Warehouse.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Client>().HasIndex(c => c.Name).IsUnique();
 
             modelBuilder.Entity<Stock>().HasIndex(s => new { s.ClientId, s.ProductId, s.SectionId }).IsUnique();
 
@@ -63,13 +66,10 @@ namespace Frozen_Warehouse.Infrastructure.Data
             };
             modelBuilder.Entity<Section>().HasData(sections);
 
-            // Seed users with fixed GUIDs and plain text passwords (testing only)
-            var adminId = Guid.Parse("00000000-0000-0000-0000-000000000001");
-            var skId = Guid.Parse("00000000-0000-0000-0000-000000000002");
-
+            // Seed users with integer ids and plain text passwords (testing only)
             modelBuilder.Entity<User>().HasData(
-                new User { Id = adminId, Username = "admin", Password = "123456", Role = Roles.Admin },
-                new User { Id = skId, Username = "storekeeper", Password = "123456", Role = Roles.StoreKeeper }
+                new User { Id = 1, Username = "admin", Password = "123456", Role = Roles.Admin },
+                new User { Id = 2, Username = "storekeeper", Password = "123456", Role = Roles.StoreKeeper }
             );
         }
 

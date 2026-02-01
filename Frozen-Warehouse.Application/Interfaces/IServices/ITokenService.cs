@@ -4,6 +4,6 @@ namespace Frozen_Warehouse.Application.Interfaces.IServices
 {
     public interface ITokenService
     {
-        string CreateToken(Guid userId, string userName, string role);
+        string CreateToken(int userId, string userName, string role);
     }
 }
