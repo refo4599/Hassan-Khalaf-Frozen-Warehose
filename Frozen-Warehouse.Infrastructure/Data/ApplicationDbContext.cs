@@ -27,6 +27,8 @@ namespace Frozen_Warehouse.Infrastructure.Data
 
             modelBuilder.Entity<Client>().HasIndex(c => c.Name).IsUnique();
 
+            modelBuilder.Entity<Product>().HasQueryFilter(p => p.IsActive);
+
             modelBuilder.Entity<Stock>().HasIndex(s => new { s.ClientId, s.ProductId, s.SectionId }).IsUnique();
 
             // Configure relationships from Stock side to avoid requiring navigation collections on Client/Product/Section
@@ -38,7 +40,7 @@ namespace Frozen_Warehouse.Infrastructure.Data
 
             modelBuilder.Entity<Stock>()
                 .HasOne(s => s.Product)
-                .WithMany()
+                .WithMany(p => p.Stocks)
                 .HasForeignKey(s => s.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
