@@ -1,6 +1,7 @@
 using Frozen_Warehouse.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Frozen_Warehouse.Infrastructure.Data;
+using Frozen_Warehouse.Domain.Entities;
 
 namespace Frozen_Warehouse.Infrastructure.Repositories
 {
@@ -37,6 +38,19 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
+            // Special-case Inbound to include navigation properties (Client and Details -> Product/Section)
+            if (typeof(T) == typeof(Inbound))
+            {
+                var query = _dbSet.AsQueryable()
+                    .AsNoTracking()
+                    .Include("Client")
+                    .Include("Details.Product")
+                    .Include("Details.Section");
+
+                var list = await query.ToListAsync();
+                return list.Cast<T>();
+            }
+
             return await _dbSet.AsNoTracking().ToListAsync();
         }
 

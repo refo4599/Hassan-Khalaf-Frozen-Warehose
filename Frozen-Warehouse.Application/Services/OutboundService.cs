@@ -25,7 +25,7 @@ namespace Frozen_Warehouse.Application.Services
 
             var outbound = new Outbound
             {
-                ClientId = request.ClientId,
+                //ClientId = request.ClientId,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -45,7 +45,7 @@ namespace Frozen_Warehouse.Application.Services
             {
                 var detail = new OutboundDetail
                 {
-                    OutboundId = outbound.Id,
+                    //OutboundId = outbound.Id,
                     ProductId = line.ProductId,
                     SectionId = line.SectionId,
                     Cartons = line.Cartons,

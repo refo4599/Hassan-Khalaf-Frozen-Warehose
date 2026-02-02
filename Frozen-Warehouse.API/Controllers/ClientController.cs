@@ -21,7 +21,7 @@ namespace Frozen_Warehouse.API.Controllers
             return Ok(clients);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("by-id/{id}")]
         public IActionResult GetClientById(int id)
         {
             var client = _context.Clients.Find(id);
@@ -31,7 +31,7 @@ namespace Frozen_Warehouse.API.Controllers
             }
             return Ok(client);
         }
-        [HttpGet("{name}")]
+        [HttpGet("by-name/{name}")]
         public IActionResult GetClientByName(string name)
         {
             var client = _context.Clients.FirstOrDefault(c => c.Name == name);
