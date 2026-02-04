@@ -5,18 +5,11 @@ namespace Frozen_Warehouse.Domain.Entities
     using System.Collections.Generic;
     using System.Text.Json.Serialization;
 
-    public class Product
+    public class Product:BaseEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         public string Name { get; set; } = null!;
 
         public bool IsActive { get; set; } = true;
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; set; }
 
         // Navigation: stocks referencing this product
         [JsonIgnore]

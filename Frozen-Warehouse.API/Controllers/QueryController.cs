@@ -143,33 +143,39 @@ namespace Frozen_Warehouse.API.Controllers
             var clientExists = await _db.Clients.AnyAsync(c => c.Id == clientId);
             if (!clientExists) return NotFound(new { Message = $"Client {clientId} not found." });
 
-            // Compute inbound and outbound sums grouped by section for this client
-            var inboundQuery = from d in _db.InboundDetails
-                               join i in _db.Inbounds on d.InboundId equals i.Id
-                               where i.ClientId == clientId
-                               group d by d.SectionId into g
-                               select new { SectionId = g.Key, Cartons = g.Sum(x => x.Cartons), Pallets = g.Sum(x => x.Pallets) };
+            // Materialize inbound and outbound grouped sums with AsNoTracking to avoid EF tracked graphs in the response.
+            var inboundList = await (from d in _db.InboundDetails
+                                     join i in _db.Inbounds on d.InboundId equals i.Id
+                                     where i.ClientId == clientId
+                                     group d by d.SectionId into g
+                                     select new { SectionId = g.Key, Cartons = g.Sum(x => x.Cartons), Pallets = g.Sum(x => x.Pallets) })
+                                    .AsNoTracking()
+                                    .ToListAsync();
 
-            var outboundQuery = from d in _db.OutboundDetails
-                                join o in _db.Outbounds on d.OutboundId equals o.Id
-                                where o.ClientId == clientId
-                                group d by d.SectionId into g
-                                select new { SectionId = g.Key, Cartons = g.Sum(x => x.Cartons), Pallets = g.Sum(x => x.Pallets) };
+            var outboundList = await (from d in _db.OutboundDetails
+                                      join o in _db.Outbounds on d.OutboundId equals o.Id
+                                      where o.ClientId == clientId
+                                      group d by d.SectionId into g
+                                      select new { SectionId = g.Key, Cartons = g.Sum(x => x.Cartons), Pallets = g.Sum(x => x.Pallets) })
+                                     .AsNoTracking()
+                                     .ToListAsync();
 
-            var query = from section in _db.Sections
-                        join inb in inboundQuery on section.Id equals inb.SectionId into inbg
-                        from inb in inbg.DefaultIfEmpty()
-                        join outb in outboundQuery on section.Id equals outb.SectionId into outbg
-                        from outb in outbg.DefaultIfEmpty()
-                        orderby section.Id
-                        select new ClientSectionDto(
-                            clientId,
-                            section.Id,
-                            (inb != null ? inb.Cartons : 0) - (outb != null ? outb.Cartons : 0),
-                            (inb != null ? inb.Pallets : 0) - (outb != null ? outb.Pallets : 0)
-                        );
+            var inboundDict = inboundList.ToDictionary(x => x.SectionId, x => (x.Cartons, x.Pallets));
+            var outboundDict = outboundList.ToDictionary(x => x.SectionId, x => (x.Cartons, x.Pallets));
 
-            var results = await query.ToListAsync();
+            var sections = await _db.Sections.AsNoTracking().OrderBy(s => s.Id).ToListAsync();
+
+            var results = sections.Select(section =>
+            {
+                var inb = inboundDict.TryGetValue(section.Id, out var iv) ? iv : (0, 0);
+                var outb = outboundDict.TryGetValue(section.Id, out var ov) ? ov : (0, 0);
+
+                var cartons = inb.Item1 - outb.Item1;
+                var pallets = inb.Item2 - outb.Item2;
+
+                return new ClientSectionDto(clientId, section.Id, cartons, pallets);
+            }).ToList();
+
             return Ok(results);
         }
 

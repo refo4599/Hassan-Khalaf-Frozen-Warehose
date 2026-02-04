@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Frozen_Warehouse.Domain.Entities
 {
-    public class Stock
+    public class Stock:BaseEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
 
         public int ClientId { get; set; }
         public Client Client { get; set; } = null!;

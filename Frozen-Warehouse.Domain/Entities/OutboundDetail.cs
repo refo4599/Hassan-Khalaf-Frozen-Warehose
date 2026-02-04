@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Frozen_Warehouse.Domain.Entities
 {
-    public class OutboundDetail
+    public class OutboundDetail:BaseEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
         public  int OutboundId { get; set; }
         public Outbound Outbound { get; set; } = null!;
 
