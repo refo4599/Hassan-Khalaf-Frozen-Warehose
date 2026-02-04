@@ -54,10 +54,51 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
             return await _dbSet.AsNoTracking().ToListAsync();
         }
 
-        // provide queryable for advanced operations
+        // Implement date range query
+        public async Task<IEnumerable<T>> GetByDateRangeAsync(DateTime start, DateTime end)
+        {
+            if (typeof(T) == typeof(Inbound))
+            {
+                var inbounds = await _context.Set<Inbound>()
+                    .AsNoTracking()
+                    .Include(i => i.Client)
+                    .Include(i => i.Details).ThenInclude(d => d.Product)
+                    .Include(i => i.Details).ThenInclude(d => d.Section)
+                    .Where(i => i.CreatedAt >= start && i.CreatedAt < end)
+                    .ToListAsync();
+
+                return inbounds.Cast<T>();
+            }
+
+            // Default: return all
+            return await _dbSet.AsNoTracking().ToListAsync();
+        }
+
+        // provide queryable for advanced operations (internal use only)
         public IQueryable<T> Query()
         {
             return _dbSet.AsQueryable();
+        }
+
+        // Implement daily report method required by IRepository interface
+        public async Task<IEnumerable<T>> GetDailyReportAsync()
+        {
+            // If the repository is for Inbound, include navigation props and filter by today's CreatedAt
+            if (typeof(T) == typeof(Inbound))
+            {
+                var inbounds = await _context.Set<Inbound>()
+                    .AsNoTracking()
+                    .Include(i => i.Client)
+                    .Include(i => i.Details).ThenInclude(d => d.Product)
+                    .Include(i => i.Details).ThenInclude(d => d.Section)
+                    .Where(i => i.CreatedAt >= DateTime.UtcNow.Date)
+                    .ToListAsync();
+
+                return inbounds.Cast<T>();
+            }
+
+            // Default behavior: return all entities
+            return await _dbSet.AsNoTracking().ToListAsync();
         }
     }
 }

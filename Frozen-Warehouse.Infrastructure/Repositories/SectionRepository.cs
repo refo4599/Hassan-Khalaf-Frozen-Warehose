@@ -2,6 +2,7 @@ using Frozen_Warehouse.Domain.Entities;
 using Frozen_Warehouse.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Frozen_Warehouse.Domain.Interfaces;
+using System.Linq;
 
 namespace Frozen_Warehouse.Infrastructure.Repositories
 {
@@ -44,6 +45,20 @@ namespace Frozen_Warehouse.Infrastructure.Repositories
         public void Remove(Section section)
         {
             _dbSet.Remove(section);
+        }
+
+        public async Task<IEnumerable<Section>> GetDailyReportAsync()
+        {
+            return await _dbSet.AsNoTracking()
+                .Where(s => s.CreatedAt >= DateTime.UtcNow.Date)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Section>> GetByDateRangeAsync(DateTime start, DateTime end)
+        {
+            return await _dbSet.AsNoTracking()
+                .Where(s => s.CreatedAt >= start && s.CreatedAt < end)
+                .ToListAsync();
         }
     }
 }

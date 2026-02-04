@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Frozen_Warehouse.Domain.Interfaces
 {
     public interface IRepository<T> where T : class
@@ -7,5 +9,7 @@ namespace Frozen_Warehouse.Domain.Interfaces
         void Update(T entity);
         void Remove(T entity);
         Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<T>> GetDailyReportAsync();
+        Task<IEnumerable<T>> GetByDateRangeAsync(DateTime start, DateTime end);
     }
 }

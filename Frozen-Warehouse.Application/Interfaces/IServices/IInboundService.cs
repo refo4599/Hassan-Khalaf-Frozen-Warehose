@@ -7,5 +7,8 @@ namespace Frozen_Warehouse.Application.Interfaces.IServices
     {
         Task<int> CreateInboundAsync(CreateInboundRequest request);
         Task<IEnumerable<Inbound>> GetAllInboundsAsync();
+        Task<IEnumerable<Inbound>> GetDailyInboundReportAsync();
+        Task<IEnumerable<Inbound>> GetInboundReportFromToAsync(DateTime startDate, DateTime endDate);
+        Task UpdateInboundAsync(int id, UpdateInboundRequest request);
     }
 }

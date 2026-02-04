@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 using Frozen_Warehouse.Infrastructure.DependencyInjection;
+using System.Text.Json.Serialization;
 
 namespace Frozen_Warehouse.API
 {
@@ -24,7 +25,15 @@ namespace Frozen_Warehouse.API
             var configuration = builder.Configuration;
 
             // Add services to the container.
-            builder.Services.AddControllers();
+            // Configure controllers and JSON options to handle object cycles from EF navigation properties
+            builder.Services.AddControllers()
+                .AddJsonOptions(opt =>
+                {
+                    // Prevent serialization exceptions when entity graphs contain cycles
+                    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    // Keep default behavior for nulls (optional)
+                    opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                });
             builder.Services.AddEndpointsApiExplorer();
 
             // CORS - allow Angular frontend
